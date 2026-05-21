@@ -9,8 +9,14 @@ export async function salvarCliente(dadosFormulario: CriarClienteInput) {
   const company_origin_id = crypto.randomUUID();
   const data_abertura = new Date().toISOString();
 
+  const table = process.env.TABELA_DYNAMODB;
+
+  if (!table) {
+    throw new Error("A variavel de ambiente TABELA_DYNAMO não foi configurada");
+  }
+
   const comando = new PutItemCommand({
-    TableName: "gld_client",
+    TableName: table,
     Item: {
       company_origin_id: { S: company_origin_id },
       data_abertura: { S: data_abertura },
@@ -21,6 +27,5 @@ export async function salvarCliente(dadosFormulario: CriarClienteInput) {
     },
   });
 
-  await dynamoClient.send(comando)
-  
+  await dynamoClient.send(comando);
 }
